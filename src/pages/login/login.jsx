@@ -20,8 +20,9 @@ export default class Login extends Component {
     render() {
         //判断用户是否登录
         const user = memoryUtils.user
-        if(user || user._id){
-             //  console.log(user);
+       
+        if(user && user._id){
+            //用户已经登录,转到后台页面,&&两者都为true返回true
             return <Redirect to={'/'}></Redirect>
         }
         const onFinish = async (values) => {
@@ -31,12 +32,13 @@ export default class Login extends Component {
             const { username, password } = values
 
             const result = await reqLogin(username, password)
-            console.log("成功" + result);
+            console.log( result);
            // const result = response.data
             if(result.status === 0){
                 message.success("登录成功")
                 const user = result.data
                 memoryUtils.user = user
+              //  console.log(user);
                 storageUtils.saveUser(user)
             
                 //跳转到后台管理界面

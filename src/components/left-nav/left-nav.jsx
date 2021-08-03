@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { Link,withRouter } from 'react-router-dom'
 import './leftNav.css'
 import ing from '../../../src/assets/images/yuan.webp'
 import { Menu } from 'antd';
@@ -18,7 +18,7 @@ import { ItemGroup } from 'rc-menu';
 import Item from 'antd/lib/list/Item';
 import { toBindingIdentifierName } from '@babel/types';
 const { SubMenu } = Menu;
-export default class LeftNav extends Component {
+ class LeftNav extends Component {
     state = {
         collapsed: false,
     };
@@ -31,6 +31,8 @@ export default class LeftNav extends Component {
     // 根据menuconfig生成对应的标签数组
     // 使用map() ＋ 递归
     getMenuNodes_map = (menuconfig) => {
+        //得到当前请求的路径
+       const path = this.props.location.pathname
         return menuconfig.map(item => {
             if (!item.children) {
                 return (
@@ -41,6 +43,11 @@ export default class LeftNav extends Component {
                     </Menu.Item>
                 )
             }else{
+                //查找一个与当前请求路径匹配的子Item
+                const cItem = item.children.find(cItem=> cItem.key === path)
+                if(cItem){
+                    this.OpenKey = item.key
+                }
                 return(
                     <SubMenu key={item.key} icon={<MailOutlined />} title= {item.title}>
                   {this.getMenuNodes_map(item.children)}
@@ -50,35 +57,35 @@ export default class LeftNav extends Component {
             return
         })
     };
-    
+    componentWillMount(){
+        this.menuNode =  this.getMenuNodes_map(menuconfig)
+    };
     render() {
+        //debugger
+        //得到当前请求的路径
+       // const menuNode =  this.getMenuNodes_map(menuconfig)
+       const path = this.props.location.pathname
+       const openKey = this.OpenKey
         return <div className="left-nav">
             <Link to={'/'} className='left-nav-header'>
-                <img src={ing} alt="" srcset="" />
+                <img src={ing} alt="" srcSet="" />
                 <h1>后台</h1>
             </Link>
             <Menu
                 mode="inline"
                 theme="dark"
+                selectedKeys={[path]}
+                defaultOpenKeys={[openKey]}
             >
                 {
-                    this.getMenuNodes_map(menuconfig)
+                   this.menuNode
                 }
-                {/* <Menu.Item key="1" icon={<PieChartOutlined />}>
-                    <Link to='/home'>
-                        首页
-                    </Link>
-                </Menu.Item>
-
-                <SubMenu key="sub1" icon={<MailOutlined />} title="商品">
-                    <Menu.Item icon={<MailOutlined />} key="/caategory">
-                        <Link to='/category'>品类管理</Link>
-                    </Menu.Item>
-                    <Menu.Item key="/product"><Link to='/product'>商品管理</Link></Menu.Item>
-                </SubMenu>
-                <Menu.Item key="/useruser"><Link to='/user'>用户管理</Link></Menu.Item>
-                <Menu.Item key="/role"><Link to='/role'>角色管理</Link></Menu.Item> */}
+               
             </Menu>
         </div>
     }
 }
+// withRouter 高阶组件
+//包装非路由组件,返回一个新的组件,
+// 新的组件向非路由组件传递3个属性:history/location/match
+export default withRouter(LeftNav)

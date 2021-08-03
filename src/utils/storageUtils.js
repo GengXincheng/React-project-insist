@@ -14,7 +14,9 @@ export default{
        store.remove(USER_KEY)
     },
     // 读取user
+  
     getUser(){
+     
       // return JSON.parse(localStorage.getItem(USER_KEY) || '{}')   //避免返回null,造成null.
       return store.get(USER_KEY) || {}
     }
