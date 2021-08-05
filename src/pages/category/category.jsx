@@ -39,7 +39,6 @@ export default class Category extends Component {
                 render: (category) => (
 
                     <span>
-                        {/* {  console.log(category)} */}
                         <LinkButton onClick={() => this.showUpdate(category)}>修改分类</LinkButton>
                         {/* 向事件回调函数传递参数:先定义一个匿名函数,在函数调用处理的函数并传入数据 */}
                         {this.state.parentId === "0" ? (
@@ -57,28 +56,23 @@ export default class Category extends Component {
         ];
     };
     //获取一级或二级列表分类展示
-    getCatagory = async () => {
+    getCatagory = async (parented) => {
         //再发是送请求前显示loading
         this.setState({ loading: true });
-        const { parentId } = this.state;
+       parentId  = parented || this.state.parentId;
         //发送ajax请求,获取数据
         const result = await reqCategorys(parentId);
-        // console.log(result);
         //请求完成后隐藏loading
         this.setState({ loading: false });
         if (result.status === 0) {
             const categorys = result.data;
-            // console.log(categorys);
             if (parentId === "0") {
-                // console.log(parentId);
                 //更新状态
                 this.setState({ categorys });
             } else {
                 //更新二级分类状态
                 this.setState({ subCategorys: categorys });
             }
-            //  console.log(this.state.categorys);
-            //  console.log(this.state.subCategorys);
         } else {
             message.error("00获取分类列表失败");
         }
@@ -111,16 +105,41 @@ export default class Category extends Component {
         this.setState({
             showstatus: 1
         })
-        //  console.log(this.state.showstatus);
     }
-    //添加分类
-    addCategory = () => { };
+    //添加分类 确认俺妞
+    addCategory =async () => {
+        //隐藏确认框  
+        this.setState({
+            showstatus: 0
+        })
+        //收集数据并提交请求
+        
+        const parentId = this.classes.props.value;
+        //输入框内容
+        const categoryName = this.input.props.value;
+        if(!categoryName){
+            message.error('名称不能为空!')
+            return
+          }
+          const result = await reqAddCategorys(parentId,categoryName)
+          if(result.status === 0){
+            //重新显示列表
+          if(parentId === this.state.parentId){
+            this.getCatagory()
+            message.success('添加成功')
+          }else if(parentId === '0'){
+             
+                this.getCatagory(0)
+            
+          }
+          }
+        //重新获取数据并展示
+    };
     //显示修改
     showUpdate = (category) => {
         //保存数据
         this.category = category
         //修改数据
-        console.log(category);
         this.setState({
             showstatus: 2
         })
@@ -135,15 +154,13 @@ export default class Category extends Component {
         const categoryId = this.category._id
         const categoryName = this.form.state.value;
 
-        // console.log(categoryName);
-        // const categoryName = ""
+
         //数据库有问题
         const result = await reqUpdateCategorys({ categoryId, categoryName })
         if (result.status === 1) {
             //重新显示新的列表
             this.getCatagory()
-            console.log('xiugai');
-            // console.log(categoryName);
+
         } else {
             message.error('更新数据失败')
         }
@@ -169,7 +186,7 @@ export default class Category extends Component {
     }
     render() {
         //读取状态数据
-       
+
         const {
             categorys,
             subCategorys,
@@ -180,7 +197,7 @@ export default class Category extends Component {
         } = this.state;
         let category = this.category || {}
         //card的左侧
-        
+
         const title =
             parentId === "0" ? (
                 "一级分类列表"
@@ -189,7 +206,7 @@ export default class Category extends Component {
                     <LinkButton onClick={this.showFirstCategorys}>
                         一级分类列表
                     </LinkButton>
-                    
+
                     <ArrowRightOutlined />
                     <span>{parentName}</span>
                 </span>
@@ -205,7 +222,7 @@ export default class Category extends Component {
         // debugger
         return (
             <Card title={title} extra={extra}>
-                
+
                 <Table
                     columns={this.columns}
                     bordered
@@ -214,15 +231,20 @@ export default class Category extends Component {
                     pagination={{ defaultPageSize: 5, showQuickJumper: true }}
                     loading={loading}
                 />
-                {console.log(categorys)}
-                {/* visible={showstatus}   */}
+
                 <Modal
                     title="添加分类"
                     visible={showstatus === 1}
                     onOk={this.addCategory}
                     onCancel={this.handleCancel}
                 >
-                    <AddForm categotys={categotys} parentId={parentId}/>
+                    <AddForm categorys={categorys} parentId={parentId}
+                        setClasses={(classes) => {
+                            this.classes = classes;
+                        }}
+                        setInput={(input) => {
+                            this.input = input;
+                        }} />
                 </Modal>
                 <Modal
                     title="更新分类"
@@ -230,7 +252,7 @@ export default class Category extends Component {
                     onOk={this.upDateCategory}
                     onCancel={this.handleCancel}
                 >
-                    <UpdateForm category={category.name ? category.name : ""} setForm = {(form)=>{this.form = form}}></UpdateForm>
+                    <UpdateForm category={category.name ? category.name : ""} setForm={(form) => { this.form = form }}></UpdateForm>
                     {/* {console.log(category.name)} */}
                 </Modal>
             </Card>
