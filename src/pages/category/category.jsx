@@ -134,7 +134,8 @@ export default class Category extends Component {
         //发送请求更新分类   reqUpdateCategorys
         const categoryId = this.category._id
         const categoryName = this.form.state.value;
-        console.log(categoryName);
+
+        // console.log(categoryName);
         // const categoryName = ""
         //数据库有问题
         const result = await reqUpdateCategorys({ categoryId, categoryName })
@@ -142,6 +143,7 @@ export default class Category extends Component {
             //重新显示新的列表
             this.getCatagory()
             console.log('xiugai');
+            // console.log(categoryName);
         } else {
             message.error('更新数据失败')
         }
@@ -149,6 +151,8 @@ export default class Category extends Component {
     };
     //取消添加/更新分类   点击取消显示对话框
     handleCancel = () => {
+        //清除输入数据    没弄
+
         this.setState({
             showstatus: 0,
         });
@@ -165,6 +169,7 @@ export default class Category extends Component {
     }
     render() {
         //读取状态数据
+       
         const {
             categorys,
             subCategorys,
@@ -175,6 +180,7 @@ export default class Category extends Component {
         } = this.state;
         let category = this.category || {}
         //card的左侧
+        
         const title =
             parentId === "0" ? (
                 "一级分类列表"
@@ -182,9 +188,10 @@ export default class Category extends Component {
                 <span>
                     <LinkButton onClick={this.showFirstCategorys}>
                         一级分类列表
-                    </LinkButton>{" "}
+                    </LinkButton>
+                    
                     <ArrowRightOutlined />
-                    <span>{parentName}</span>{" "}
+                    <span>{parentName}</span>
                 </span>
             );
         //card的右侧
@@ -195,8 +202,10 @@ export default class Category extends Component {
         );
 
         //   const { loading } = this.state
+        // debugger
         return (
             <Card title={title} extra={extra}>
+                
                 <Table
                     columns={this.columns}
                     bordered
@@ -205,6 +214,7 @@ export default class Category extends Component {
                     pagination={{ defaultPageSize: 5, showQuickJumper: true }}
                     loading={loading}
                 />
+                {console.log(categorys)}
                 {/* visible={showstatus}   */}
                 <Modal
                     title="添加分类"
@@ -212,7 +222,7 @@ export default class Category extends Component {
                     onOk={this.addCategory}
                     onCancel={this.handleCancel}
                 >
-                    <AddForm />
+                    <AddForm categotys={categotys} parentId={parentId}/>
                 </Modal>
                 <Modal
                     title="更新分类"
