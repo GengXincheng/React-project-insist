@@ -59,8 +59,8 @@ export default class Category extends Component {
     getCatagory = async (parented) => {
         //再发是送请求前显示loading
         this.setState({ loading: true });
-        const {parentId} = this.state
-        parented  = parented || this.state.parentId;
+        const { parentId } = this.state
+        parented = parented || this.state.parentId;
         //发送ajax请求,获取数据
         const result = await reqCategorys(parentId);
         //请求完成后隐藏loading
@@ -108,33 +108,32 @@ export default class Category extends Component {
         })
     }
     //添加分类 确认俺妞
-    addCategory =async () => {
+    addCategory = async () => {
         //隐藏确认框  
         this.setState({
             showstatus: 0
         })
         //收集数据并提交请求
-        
         const parentId = this.classes.props.value;
         //输入框内容
         const categoryName = this.input.props.value;
-        if(!categoryName){
+        if (!categoryName) {
             message.error('名称不能为空!')
             return
-          }
-          const result = await reqAddCategorys(parentId,categoryName)
-          if(result.status === 0){
+        }
+        const result = await reqAddCategorys(parentId, categoryName)
+        if (result.status === 0) {
             //重新显示列表
-          if(parentId === this.state.parentId){
-            this.getCatagory()
-            message.success('添加成功')
-          }else if(parentId === '0'){
-             
+            if (parentId === this.state.parentId) {
+                this.getCatagory()
+                message.success('添加成功')
+            } else if (parentId === '0') {
+
                 this.getCatagory(0)
-            
-          }
-          }
-        //重新获取数据并展示
+
+            }
+        }
+        //重新获取数据并展示   
     };
     //显示修改
     showUpdate = (category) => {
@@ -147,6 +146,7 @@ export default class Category extends Component {
     }
     //跟新分类
     upDateCategory = async () => {
+        //没弄表单验证   任务57     想用pubsub
         //g关闭确定狂
         this.setState({
             showstatus: 0
@@ -154,8 +154,6 @@ export default class Category extends Component {
         //发送请求更新分类   reqUpdateCategorys
         const categoryId = this.category._id
         const categoryName = this.form.state.value;
-
-
         //数据库有问题
         const result = await reqUpdateCategorys({ categoryId, categoryName })
         if (result.status === 1) {
