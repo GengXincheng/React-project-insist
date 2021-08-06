@@ -11,6 +11,8 @@ export default class UpdateForm extends Component {
         
     }
     componentDidUpdate() {
+        console.log( this.formRef.current);
+        // 我们通过 "current" 来访问 DOM 节点
         this.formRef.current.setFieldsValue({
             category: this.props.category,
         });
