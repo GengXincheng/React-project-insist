@@ -12,6 +12,9 @@ export const reqCategorys = (parentId)=> ajax("/manage/category/list", {parentId
 export const reqAddCategorys = (parentId ,categoryName )=> ajax("/manage/category/add", {parentId,categoryName},"POST")
 // 更新分类
 export const reqUpdateCategorys = (categoryId,categoryName)=> ajax("/manage/category/update", {categoryId,categoryName},"POST")
+//获取商品分页列表
+export const reqPProducts = ()=>axios("/manage/product/list",{pageNum,pageSize})
+
 // 天气接口:jsp形式的
 export const reqWeather = (city) => {
   return new Promise((resolve, reject) => {
