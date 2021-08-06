@@ -5,7 +5,7 @@ import { Form, Input, Button, Checkbox, Select } from 'antd';
 const Item = Form.Item
 const Option = Select.Option
 export default class AddForm extends Component {
-  formRef = React.createRef(); 
+  // formRef = React.createRef();   //不知道有啥用
   static propTypes = {
     categorys: Proptypes.array.isRequired,//一级分类的数组
     parentId: Proptypes.string.isRequired,//父分类的id
