@@ -59,7 +59,8 @@ export default class Category extends Component {
     getCatagory = async (parented) => {
         //再发是送请求前显示loading
         this.setState({ loading: true });
-       parentId  = parented || this.state.parentId;
+        const {parentId} = this.state
+        parented  = parented || this.state.parentId;
         //发送ajax请求,获取数据
         const result = await reqCategorys(parentId);
         //请求完成后隐藏loading
