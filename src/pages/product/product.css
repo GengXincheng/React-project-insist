@@ -1,0 +1,16 @@
+.product-detail .left {
+  font-family: 20px;
+  font-weight: bold;
+  margin-right: 15px;
+  float: left;
+}
+.product-detail .product-img {
+  width: 200px;
+  height: 200px;
+  border: 1px solid skyblue;
+  margin-right: 5px;
+}
+.ant-list-item {
+  display: flex;
+  justify-content: left;
+}

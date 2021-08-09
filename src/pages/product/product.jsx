@@ -3,6 +3,7 @@ import { Switch,Route ,Redirect} from 'react-router-dom'
 import Home from './home'
 import ProductDetail from './detail'
 import ProductAddupdate from './add-update'
+import './product.css' //映入没提示?
 // 商品路由
 export default class Product extends Component {
 
