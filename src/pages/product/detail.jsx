@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
-import { Card,List } from 'antd'
+import { Card, List } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import LinkButton from '../../components/link-button/link-button'
+import { BASE_IMG_URL } from '../../utils/constents';
+import Base from 'antd/lib/typography/Base';
 const Item = List.Item
-      // import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 // 商品详情的路由
 export default class ProductDetail extends Component {
-// dangerouslySetInnerHTML
+    // dangerouslySetInnerHTML
     render() {
-        const title=(
+        const { desc, price, detail, name, imgs } = this.props.location.state.desc
+        //  console.log(this.props.location.state.desc);
+        const title = (
             <span>
-                <ArrowLeftOutlined style={{color:"blue"}}  /> <span>商品详情</span>
+                <LinkButton onClick={() => { this.props.history.goBack() }}>
+                    <ArrowLeftOutlined style={{ color: "blue" }} />
+                </LinkButton> <span>商品详情</span>
             </span>
         )
         return (
@@ -17,15 +24,15 @@ export default class ProductDetail extends Component {
                 <List>
                     <Item>
                         <span className="left">商品名称:</span>
-                        <span>联想</span>
+                        <span>{name}</span>
                     </Item>
                     <Item>
-                        <span className="left">商品名称:</span>
-                        <span>联想</span>
+                        <span className="left">商品描述:</span>
+                        <span>{desc}</span>
                     </Item>
                     <Item>
-                        <span className="left">商品名称:</span>
-                        <span>联想</span>
+                        <span className="left">商品价格:</span>
+                        <span>{price}</span>
                     </Item>
                     <Item>
                         <span className="left">所属分类:</span>
@@ -33,8 +40,20 @@ export default class ProductDetail extends Component {
                     </Item>
                     <Item>
                         <span className="left">商品图片:</span>
-                        <span><img className='product-img' src="https://img-blog.csdnimg.cn/b1a23ee257854cffa6810ab7c9b7d84c.jpg?x-oss-process=image/resize,m_fixed,h_200" /></span>
-                        
+                        <span>
+                            {
+                                // console.log(imgs)
+                                imgs.map(img=>(
+                                    <img key={img} className='product-img' src={BASE_IMG_URL+ img} />
+                                ))
+                            }
+
+                        </span>
+
+                    </Item>
+                    <Item>
+                        <span className="left">商品详情:</span>
+                        <span dangerouslySetInnerHTML={{ __html: detail }}></span>
                     </Item>
                 </List>
             </Card>

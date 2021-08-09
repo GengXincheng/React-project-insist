@@ -59,6 +59,9 @@ export default class Home extends Component {
         render: (name, desc, price, detail, imgs, categoryId, pCategoryId) => {
           return (
             <span>
+              {/* 编程式路由导航,是路由组件可以访问到histoyr
+                将desc对象使用state传递给目标路由组件
+              */}
               <Button onClick={() => this.props.history.push('/product/detail', { desc })}>详情</Button>
               <Button onClick={() => this.props.history.push('/product/addupdate', { desc })}>修改</Button>
             </span>
@@ -73,16 +76,16 @@ export default class Home extends Component {
     this.setState({ loading: true })
     const { searchName,
       searchType } = this.state
-      let result
-     // console.log(searchType);
-      //有值为搜索分页,
-    if (searchName) { 
-      result = await reqSearchProducts(pageNum, PAGE_SIZE, searchName,searchType)
+    let result
+    // console.log(searchType);
+    //有值为搜索分页,
+    if (searchName) {
+      result = await reqSearchProducts(pageNum, PAGE_SIZE, searchName, searchType)
 
     } else { //一般分页请求
       result = await reqProducts(pageNum, PAGE_SIZE)
     }
-   //  result = await reqProducts(pagNum, PAGE_SIZE)
+    //  result = await reqProducts(pagNum, PAGE_SIZE)
     if (result.status === 0) {
       //去除分页数据更新状态并显示
       const { total, list } = result.data
