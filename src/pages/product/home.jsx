@@ -68,10 +68,23 @@ export default class Home extends Component {
     ];
   };
   //获取product数据
-  getProducts = async (pagNum) => {
+  getProducts = async (pageNum) => {
+    // this.pageNum=pageNum
     this.setState({ loading: true })
-    const result = await reqProducts(pagNum, PAGE_SIZE)
+    const { searchName,
+      searchType } = this.state
+      let result
+     // console.log(searchType);
+      //有值为搜索分页,
+    if (searchName) { 
+      result = await reqSearchProducts(pageNum, PAGE_SIZE, searchName,searchType)
+
+    } else { //一般分页请求
+      result = await reqProducts(pageNum, PAGE_SIZE)
+    }
+   //  result = await reqProducts(pagNum, PAGE_SIZE)
     if (result.status === 0) {
+      //去除分页数据更新状态并显示
       const { total, list } = result.data
       this.setState({ total, products: list, loading: false })
     }
@@ -86,13 +99,13 @@ export default class Home extends Component {
   render() {
     const { products, total, loading, searchName, searchType } = this.state
     const title = (<span>
-      {/* 受控组件    使用onChange  */}
-      <Select value={searchType}  style={{ width: 120 }} onChange={value => this.setState({ searchType: value })}>
+      {/* 受控组件:肯定要定义状态    使用onChange  不使用的话改变不了选项值 */}
+      <Select value={searchType} style={{ width: 120 }} onChange={value => this.setState({ searchType: value })}>
         <Option value="productName" >按名称搜索</Option>
         <Option value="productDesc" >按类别搜索</Option>
       </Select>
-      <Input placeholder="搜索关键字" style={{ width: 150, margin: "0 15px" }} value={searchName}></Input>
-      <Button type="primary" icon={<SearchOutlined />}>
+      <Input placeholder="搜索关键字" style={{ width: 150, margin: "0 15px" }} value={searchName} onChange={event => this.setState({ searchName: event.target.value })}></Input>
+      <Button type="primary" icon={<SearchOutlined />} onClick={() => this.getProducts(1)}>
         搜索
       </Button>
     </span>)
