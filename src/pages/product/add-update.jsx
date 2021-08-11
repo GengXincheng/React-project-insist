@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Card, Form, Input, Cascader, Upload, Button, Divider, message } from 'antd'
 import LinkButton from '../../components/link-button/link-button';
 import { SearchOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import PicturesWall from './PicturesWall ';
 import prettyFormat from 'pretty-format';
 import { reqCategorys } from '../../api';
 const { Item } = Form
@@ -11,6 +12,11 @@ export default class ProductAddupdate extends Component {
     state = {
         options: [],
     }
+    constructor(props) {
+        super(props)
+        //创建用来保存ref标识的标签对象的容器
+        this.pw = React.createRef()
+    }
     componentDidMount() {
         this.getcategorys("0")
     }
@@ -18,15 +24,15 @@ export default class ProductAddupdate extends Component {
 
         let product
         try {
-             product =  this.props.location.state.desc
+            product = this.props.location.state.desc
         } catch (error) {
             product = {}
         }
         // const product =  this.props.location.state.desc || {}
-    //    console.log(  this.props.location);
-    //保存一个是否是更新的状态
-    this.isUpdate = !!product
-    this.product = product || {}
+        //    console.log(  this.props.location);
+        //保存一个是否是更新的状态
+        this.isUpdate = !!product
+        this.product = product || {}
     }
     // 获取一级或二级分类列表
     getcategorys = async (parented) => {
@@ -40,7 +46,7 @@ export default class ProductAddupdate extends Component {
             }
         }
     }
-    initOptions =async (categorys) => {
+    initOptions = async (categorys) => {
         const options = categorys.map((c) => ({//回调函数返回一个对象必须这么写
             value: c._id,
             label: c.name,//属性名必须和事例中的一样,不一样会出现没有字的bug
@@ -48,23 +54,23 @@ export default class ProductAddupdate extends Component {
         }))//这里生成一个options数组
         // console.log(options);
         //如果是一个二级分的商品更新
-        const {isUpdate,product} = this
+        const { isUpdate, product } = this
         // console.log(this);
-        const {pCategoryId,categoryId} = product
-        if(isUpdate && pCategoryId !== "0"){
+        const { pCategoryId, categoryId } = product
+        if (isUpdate && pCategoryId !== "0") {
             //获取二级分类列表
-           const subCategorys =await this.getcategorys(pCategoryId)
-              //生成二级下拉列表       
-              const chiledoptions = subCategorys.map (c=>({
+            const subCategorys = await this.getcategorys(pCategoryId)
+            //生成二级下拉列表       
+            const chiledoptions = subCategorys.map(c => ({
                 value: c._id,
                 label: c.name,//属性名必须和事例中的一样,不一样会出现没有字的bug
                 isLeaf: true,
-              }))
-              //找到当前商品一级的options
-             // console.log(options);
-              const targetOption = options.find(b=>b.value===pCategoryId) || {}
-              //关联到对应的optiOS上
-              targetOption.children = chiledoptions
+            }))
+            //找到当前商品一级的options
+            // console.log(options);
+            const targetOption = options.find(b => b.value === pCategoryId) || {}
+            //关联到对应的optiOS上
+            targetOption.children = chiledoptions
         }
 
         this.setState({ options })
@@ -79,7 +85,7 @@ export default class ProductAddupdate extends Component {
         const subCategorys = await this.getcategorys(targetOption.value);
         //  debugger
         targetOption.loading = false;
-       // setTimeout(() => { targetOption.loading = false }, 100)
+        // setTimeout(() => { targetOption.loading = false }, 100)
         if (subCategorys && subCategorys.length > 0) {
             const cOptions = subCategorys.map((c) => ({
                 //注意小括号,生成二级列表
@@ -101,7 +107,9 @@ export default class ProductAddupdate extends Component {
     }
     onChange = () => { }
     onFinish = (valus) => {
-       console.log('tijiao');
+        console.log('tijiao');
+        const images = this.pw.current.getImgs();
+
     }
     render() {
         const {
@@ -112,28 +120,27 @@ export default class ProductAddupdate extends Component {
             imgs,
             pCategoryId,
             categoryId,
-            
-          } = this.product;
-       
-          const categoryIds = [];
-          if(this.isUpdate){
-              if(pCategoryId === 0){
+        } = this.product;
+
+        const categoryIds = [];
+        if (this.isUpdate) {
+            if (pCategoryId === 0) {
                 categoryIds.push(categoryId)
 
-              }else{
+            } else {
                 categoryIds.push(pCategoryId)
                 categoryIds.push(categoryId)
-                
-              }
-          }
-        const {isUpdate} = this
+
+            }
+        }
+        const { isUpdate } = this
         const title = (
             <span>
                 <LinkButton onClick={() => { this.props.history.goBack() }}>
                     <ArrowLeftOutlined />
                 </LinkButton>
                 <span>
-                {isUpdate?"添加商品":"修改商品"}
+                    {isUpdate ? "添加商品" : "修改商品"}
                 </span>
             </span>
         )
@@ -148,7 +155,7 @@ export default class ProductAddupdate extends Component {
                     onFinishFailed={onFinishFailed}
                 >
                     <Item label="商品名称:" name="name"
-                      initialValue={name}
+                        initialValue={name}
                         rules={[{ required: true, message: "必须输入商品名称!" }]}
                     >
                         <Input placeholder="商品名称"></Input>
@@ -168,7 +175,7 @@ export default class ProductAddupdate extends Component {
                     ]}>
                         <Input type="number" placeholder="商品价格" addonAfter="元"></Input>
                     </Item>
-                    <Item label="商品分类:"  initialValue={categoryIds} name="categoryIds" >
+                    <Item label="商品分类:" initialValue={categoryIds} name="categoryIds" >
                         {/* 
                              */}
                         <Cascader
@@ -179,15 +186,14 @@ export default class ProductAddupdate extends Component {
                             changeOnSelect
                         ></Cascader>
                     </Item>
-                    <Item label="商品图片:" name="imgs"  initialValue={name} >
-                        <div>
-                            商品图片
-                        </div>
+                    <Item label="商品图片:" name="imgs" initialValue={name} >
+                        <PicturesWall ref={this.pw} imgs={imgs}>
+
+                        </PicturesWall>
                     </Item>
                     <Item label="商品详情:" name="detail" >
-                        <div>
-                            商品详情
-                        </div>
+                        <richTextEditor>
+                        </richTextEditor>
                     </Item>
                     <Item>
                         <Button type="primary" htmlType="submit">

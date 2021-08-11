@@ -27,7 +27,8 @@ export const  reqUpdaeStatus = (productId, status)=>ajax("/manage/product/update
 // 搜索商品分页列表(商品名称/商品描述)
 export const reqSearchProducts = (pageNum, pageSize, searchName,searchType) =>//给自己挖坑-_-,看请求头不一样不太对劲
   ajax("/manage/product/search", { pageNum, pageSize, [searchType]:searchName });
-
+//删除图片接口
+export const reqDelteImg = (name)=>ajax("/manage/img/delete",{name},"post")
 // 天气接口:jsp形式的
 export const reqWeather = (city) => {
   return new Promise((resolve, reject) => {
