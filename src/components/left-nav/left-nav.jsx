@@ -44,7 +44,7 @@ const { SubMenu } = Menu;
                 )
             }else{
                 //查找一个与当前请求路径匹配的子Item
-                const cItem = item.children.find(cItem=> cItem.key === path)
+                const cItem = item.children.find(cItem=>  path.indexOf(cItem.key)===0 )
                 if(cItem){
                     this.OpenKey = item.key
                 }
@@ -64,7 +64,12 @@ const { SubMenu } = Menu;
         //debugger
         //得到当前请求的路径
        // const menuNode =  this.getMenuNodes_map(menuconfig)
-       const path = this.props.location.pathname
+       let path = this.props.location.pathname
+      // console.log(path);
+       if(path.indexOf("/product")===0){
+           //商品的子路由或者shi
+          path = "/product"
+       }
        const openKey = this.OpenKey
         return <div className="left-nav">
             <Link to={'/'} className='left-nav-header'>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Card, Select, Input, Button, Table } from 'antd'
+import { Card, Select, Input, Button, Table, message } from 'antd'
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 // import { RequestOptions } from 'node:https';
 // import { RequestOptions } from 'node:https';
-import { reqProducts, reqSearchProducts } from "../../api/index"
+import { reqProducts, reqSearchProducts, reqUpdaeStatus } from "../../api/index"
 import { PAGE_SIZE } from '../../utils/constents';
 const { Option } = Select;
 // prodect的默认路径
@@ -41,8 +41,10 @@ export default class Home extends Component {
         title: "状态",
         dataIndex: "status",
         key: "status",
-        render: (status, _id) => {
+        render: (status, _ids) => {
           const newStatus = status === 1 ? 2 : 1
+          const {_id}=_ids
+        //  console.log(status,_id);
           return (
             <span>
               <Button type="primary" onClick={() => this.updateStatus(_id, newStatus)}>{status === 1 ? '下架' : '上架'}</Button>
@@ -63,7 +65,7 @@ export default class Home extends Component {
                 将desc对象使用state传递给目标路由组件
               */}
               <Button onClick={() => this.props.history.push('/product/detail', { desc })}>详情</Button>
-              <Button onClick={() => this.props.history.push('/product/addupdate', { desc })}>修改</Button>
+              <Button onClick={() => this.props.history.push('/product/add-update', { desc })}>修改</Button>
             </span>
           );
         },
@@ -72,7 +74,7 @@ export default class Home extends Component {
   };
   //获取product数据
   getProducts = async (pageNum) => {
-    // this.pageNum=pageNum
+    this.pageNum=pageNum
     this.setState({ loading: true })
     const { searchName,
       searchType } = this.state
@@ -93,6 +95,16 @@ export default class Home extends Component {
     }
 
   };
+  //跟新指定商品的状态
+  updateStatus = async (productId, Status) => {
+    const result= await reqUpdaeStatus(productId,Status)
+    if(result.status === 0){
+      message.success('更新商品成功')
+     this.getProducts(this.pageNum)
+    }else{
+      message.error('更新商品失败')
+    }
+  }
   componentWillMount() {
     this.initColumns()
   }
@@ -113,7 +125,7 @@ export default class Home extends Component {
       </Button>
     </span>)
     const extra = (
-      <Button type="primary" icon={<PlusOutlined />}>添加商品</Button>
+      <Button type="primary" icon={<PlusOutlined />} onClick={()=>{this.props.history.push('/product/add-update')}}>添加商品</Button>
     )
     //需要修改数据
     return (

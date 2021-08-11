@@ -21,6 +21,9 @@ export const reqProducts = (pageNum, pageSize) =>
   ajax("/manage/product/list", { pageNum, pageSize });
   //获取一个分类
   export const reqCategory = (categoryId)=>ajax("/manage/category/info",{categoryId})
+//更新商品的状态(上架/下架)
+export const  reqUpdaeStatus = (productId, status)=>ajax("/manage/product/updateStatus",{productId,status}, "post")
+
 // 搜索商品分页列表(商品名称/商品描述)
 export const reqSearchProducts = (pageNum, pageSize, searchName,searchType) =>//给自己挖坑-_-,看请求头不一样不太对劲
   ajax("/manage/product/search", { pageNum, pageSize, [searchType]:searchName });
